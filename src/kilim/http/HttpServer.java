@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import kilim.Scheduler;
 import kilim.nio.NioSelectorScheduler;
+import kilim.nio.NioSelectorScheduler.SessionFactory;
 
 /**
  * A very rudimentary HTTP server bound to a specific given port. 
@@ -32,6 +33,14 @@ public class HttpServer {
     nio = new NioSelectorScheduler();
     listen(port, httpSessionClass, Scheduler.getDefaultScheduler());
   }
+  public HttpServer(int port,SessionFactory factory) throws IOException {
+    nio = new NioSelectorScheduler();
+    listen(port, factory, Scheduler.getDefaultScheduler());
+  }
+  public HttpServer(int port,HttpSession.StringRouter handler) throws IOException {
+    nio = new NioSelectorScheduler();
+    listen(port, () -> new HttpSession.StringSession(handler), Scheduler.getDefaultScheduler());
+  }
   
   /**
    * Sets up a listener on the supplied port, and when a fresh connection comes in, it creates
@@ -45,5 +54,8 @@ public class HttpServer {
    */
   public void listen(int port, Class<? extends HttpSession> httpSessionClass, Scheduler httpSessionScheduler) throws IOException {
     nio.listen(port, httpSessionClass, httpSessionScheduler);
+  }
+  public void listen(int port,SessionFactory factory,Scheduler httpSessionScheduler) throws IOException {
+    nio.listen(port, factory, httpSessionScheduler);
   }
 }

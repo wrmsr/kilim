@@ -6,6 +6,7 @@ package kilim.http;
  * specified in the file "License"
  */
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -73,4 +74,38 @@ public class HttpSession extends SessionTask {
         sendResponse(resp);
     }
 
+    public interface StringRouter {
+        public String route(HttpRequest req) throws Pausable;
+    }
+    public static class StringSession extends HttpSession {
+        StringRouter handler;
+        public StringSession(StringRouter handler) { this.handler = handler; }
+        public void execute() throws Pausable, Exception {
+            try {
+                // We will reuse the req and resp objects
+                HttpRequest req = new HttpRequest();
+                HttpResponse resp = new HttpResponse();
+                while (true) {
+                    super.readRequest(req);
+                    if (req.keepAlive())
+                        resp.addField("Connection", "Keep-Alive");
+                    OutputStream out = resp.getOutputStream();
+                    String result = handler.route(req);
+                    out.write( result.getBytes() );
+                    sendResponse(resp);
+                    if (!req.keepAlive()) 
+                        break;
+                }
+            }
+            catch (EOFException e) {}
+            catch (IOException ioe) {
+                System.out.println("[" + this.id + "] IO Exception:" + ioe.getMessage());
+            }
+            catch (Exception ex) {
+                System.out.println("HttpSession.Simple:exception -- " + ex);
+                ex.printStackTrace();
+            }
+            super.close();
+        }
+    }
 }
