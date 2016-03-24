@@ -36,6 +36,9 @@ public class CachedClassMirrors implements Mirrors {
 
         if (ret == null) {
             ret = delegate.classForName(className);
+            ClassMirror r2 = cachedClasses.get(className);
+            if (r2 != null)
+                ret = r2;
         }
         if (ret == null) {
             throw new ClassMirrorNotFoundException(className);
@@ -53,8 +56,8 @@ public class CachedClassMirrors implements Mirrors {
     public ClassMirror mirror(String className, byte[] bytecode) {
         // if it is loaded by the classLoader already, we will
         // not load the classNode, even if the bytes are different
-        ClassMirror  ret = null;
-        if (!delegate.isLoaded(className)) {
+        ClassMirror ret = cachedClasses.get(className);
+        if (ret==null && !delegate.isLoaded(className)) {
             ret = new CachedClassMirror(bytecode);
             String name = ret.getName().replace('/', '.'); // Class.forName format
             this.cachedClasses.put(name, ret);
@@ -122,10 +125,12 @@ class CachedClassMirror extends ClassVisitor implements ClassMirror  {
 
     @Override
     public boolean isAssignableFrom(ClassMirror c) throws ClassMirrorNotFoundException {
+        if (c==null) return false;
         Detector d = Detector.getDetector();
         if (this.equals(c)) return true;
         
-        ClassMirror supcl = d.classForName(c.getSuperclass());
+        String sname = c.getSuperclass();
+        ClassMirror supcl = sname==null ? null : d.classForName(sname);
         if (isAssignableFrom(supcl)) return true;
         for (String icl: c.getInterfaces()) {
             supcl = d.classForName(icl);
