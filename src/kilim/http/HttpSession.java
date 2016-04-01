@@ -90,8 +90,11 @@ public class HttpSession extends SessionTask {
                     if (req.keepAlive())
                         resp.addField("Connection", "Keep-Alive");
                     OutputStream out = resp.getOutputStream();
-                    String result = handler.route(req);
-                    out.write( result.getBytes() );
+                    try {
+                        String result = handler.route(req);
+                        out.write( result.getBytes() );
+                    }
+                    catch (Exception ex) {}
                     sendResponse(resp);
                     if (!req.keepAlive()) 
                         break;
