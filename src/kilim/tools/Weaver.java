@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -76,6 +77,8 @@ public class Weaver {
                         currentName = fe.getFileName();
                         if (currentName.endsWith(".class")) {
                             if (exclude(currentName))
+                                continue;
+                            if (fe.check(outputDir))
                                 continue;
                             weaveFile(currentName, fe.getInputStream(), detector);
                         }

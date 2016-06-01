@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Stack;
@@ -28,6 +29,12 @@ public class FileLister implements Iterable<FileLister.Entry> {
         public abstract String getFileName();
         public abstract long getSize();
         public abstract InputStream getInputStream() throws IOException;
+        /**
+         * check if a newer version of the file exists in an output directory. false negatives are allowed
+         * @param outdir the output directory
+         * @return true if the newer version exists
+         */
+        public boolean check(String outdir) { return false; }
     };
     
     /**
@@ -94,7 +101,8 @@ abstract class FileContainer implements Iterator<FileLister.Entry> {
  */
 class DirIterator extends FileContainer {
     final File root;
-    private static class DirEntry extends FileLister.Entry {
+    String rootpath;
+    private class DirEntry extends FileLister.Entry {
         final File file;
         DirEntry(File f) {file = f;}
         
@@ -114,6 +122,14 @@ class DirIterator extends FileContainer {
         public InputStream getInputStream() throws IOException {
             return new BufferedInputStream(new FileInputStream(file));
         }
+
+        public boolean check(String outdir) {
+            String name = getFileName();
+            if (rootpath==null || ! name.startsWith(rootpath)) return false;
+            String relative = name.substring(rootpath.length());
+            File outfile = Paths.get(outdir,relative).toFile();
+            return outfile.lastModified() > file.lastModified();
+        }
     }
     
     Stack<File> stack = new Stack<File>();
@@ -121,6 +137,8 @@ class DirIterator extends FileContainer {
     
     DirIterator(File f) {
         root = f;
+        try { rootpath = root.getCanonicalPath(); }
+        catch (IOException ex) {}
         stack.push(f);
     }
 
