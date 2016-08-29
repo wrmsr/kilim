@@ -46,7 +46,6 @@ import static org.objectweb.asm.Opcodes.JSR;
 public class MethodFlow
         extends MethodNode
 {
-
     private final Detector detector;
     /**
      * The classFlow to which this methodFlow belongs

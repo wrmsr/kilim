@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 
 public class Javac
 {
-
     static Pattern publicClassNameRegexp = Pattern.compile("public +(?:class|interface) +(\\w+)");
     static Pattern classNameRegexp = Pattern.compile("(?:class|interface) +(\\w+)");
 
@@ -46,7 +45,6 @@ public class Javac
     public static List<ClassInfo> compile(List<String> srcCodes)
             throws IOException
     {
-
         List<SourceInfo> srcInfos = getSourceInfos(srcCodes);
 
         File rootDir = getTmpDir(); // something like "/tmp/kilim$2348983948"

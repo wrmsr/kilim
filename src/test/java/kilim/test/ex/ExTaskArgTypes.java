@@ -6,7 +6,6 @@ import kilim.Task;
 public class ExTaskArgTypes
         extends Task
 {
-
     public void execute()
             throws Pausable
     {

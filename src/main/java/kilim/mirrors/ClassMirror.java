@@ -2,7 +2,6 @@ package kilim.mirrors;
 
 public interface ClassMirror
 {
-
     public abstract MethodMirror[] getDeclaredMethods();
 
     public abstract boolean isAssignableFrom(ClassMirror c)

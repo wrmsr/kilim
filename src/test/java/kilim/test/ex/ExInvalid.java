@@ -50,7 +50,6 @@ class ExInvalidNPDerived
 {
     void foo()
     {
-
     }
 }
 

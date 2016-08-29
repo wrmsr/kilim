@@ -3,7 +3,6 @@
  * You may distribute this software under the terms of the license 
  * specified in the file "License"
  */
-
 package kilim.examples;
 
 import kilim.Mailbox;
@@ -13,20 +12,24 @@ import kilim.Task;
 /**
  * Spawn a task, communicate through a shared mailbox. The task's
  * termination is knowm through another mailbox.
- * 
- * The structure of this class is not much different from a Thread 
+ * <p>
+ * The structure of this class is not much different from a Thread
  * version that uses PipedInput/OutputStreams (Task instead of Thread,
  * execute() instead of run(), and typed, buffered mailboxes instead
  * of pipes.
- * 
+ * <p>
  * [compile] javac -d ./classes SimpleTask.java
  * [weave]   java kilim.tools.Weave -d ./classes kilim.examples.SimpleTask
  * [run]     java -cp ./classes:./classes:$CLASSPATH  kilim.examples.SimpleTask
  */
-public class SimpleTask extends Task {
+public class SimpleTask
+        extends Task
+{
     static Mailbox<String> mb = new Mailbox<String>();
-    
-    public static void main(String[] args) throws Exception {
+
+    public static void main(String[] args)
+            throws Exception
+    {
         new SimpleTask().start();
         Thread.sleep(10);
         mb.putnb("Hello ");
@@ -39,13 +42,17 @@ public class SimpleTask extends Task {
      * the thread ("pausable")
      */
 
-    public void execute() throws Pausable{
+    public void execute()
+            throws Pausable
+    {
         while (true) {
             String s = mb.get();
-            if (s.equals("done")) break;
+            if (s.equals("done")) {
+                break;
+            }
             System.out.print(s);
         }
-        
+
         // This is not good form. Tasks shouldn't be exiting the system. 
         // See SimpleTask2 for a better way to clean up.
         System.exit(0);

@@ -133,7 +133,6 @@ public class Detector
             }
         }
         catch (ClassMirrorNotFoundException ignore) {
-
         }
         catch (VerifyError ve) {
             return AsmDetector.getPausableStatus(className, methodName, desc, this);
@@ -165,7 +164,6 @@ public class Detector
     private MethodMirror findPausableMethod(String className, String methodName, String desc)
             throws ClassMirrorNotFoundException
     {
-
         if (isNonPausableClass(className) || isNonPausableMethod(methodName)) {
             return null;
         }

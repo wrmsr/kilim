@@ -83,7 +83,6 @@ public class TestMailbox
 
     public void testSimpleTask_Pausing()
     {
-
         Mailbox<Msg> mainmb = new Mailbox<Msg>();
 
         final int nTasks = 1;
@@ -156,7 +155,6 @@ public class TestMailbox
 
     public void testTasks()
     {
-
         Mailbox<Msg> mb = new Mailbox<Msg>();
 
         final int nTasks = 100;

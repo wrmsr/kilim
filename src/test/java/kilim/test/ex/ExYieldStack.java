@@ -6,7 +6,6 @@ import kilim.Task;
 public class ExYieldStack
         extends ExYieldBase
 {
-
     public ExYieldStack(int test)
     {
         testCase = test;

@@ -15,7 +15,6 @@ import kilim.test.ex.ExYieldBase;
 public class TestGenerics
         extends TestCase
 {
-
     public static void runTask(Task task)
             throws Exception
     {

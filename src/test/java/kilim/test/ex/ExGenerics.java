@@ -5,7 +5,6 @@ import kilim.Pausable;
 public class ExGenerics<T>
         extends ExYieldBase
 {
-
     public void execute()
             throws Pausable
     {

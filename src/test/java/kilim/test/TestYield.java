@@ -15,7 +15,6 @@ import kilim.test.ex.ExYieldBase;
 public class TestYield
         extends TestCase
 {
-
     public static void runTask(String taskClassName, int testCase)
             throws Exception
     {

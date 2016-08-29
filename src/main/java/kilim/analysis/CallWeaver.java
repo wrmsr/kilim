@@ -1058,7 +1058,6 @@ class ValInfoList
 
 class VMType
 {
-
     static final int TOBJECT = 0;
 
     static final int TINT = 1;

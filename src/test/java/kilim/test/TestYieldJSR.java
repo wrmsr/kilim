@@ -10,7 +10,6 @@ import junit.framework.TestCase;
 public class TestYieldJSR
         extends TestCase
 {
-
     /*
      * Ordinary jsr call. No inlining should happen
      */

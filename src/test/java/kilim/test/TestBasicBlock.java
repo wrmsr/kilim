@@ -10,7 +10,6 @@ import kilim.analysis.MethodFlow;
 public class TestBasicBlock
         extends Base
 {
-
     @Override
     protected void setUp()
             throws Exception

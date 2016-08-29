@@ -48,7 +48,6 @@ import static org.objectweb.asm.Opcodes.RETURN;
 
 public class MethodWeaver
 {
-
     private ClassWeaver classWeaver;
 
     private MethodFlow methodFlow;

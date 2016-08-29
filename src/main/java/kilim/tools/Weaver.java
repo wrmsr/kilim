@@ -64,7 +64,6 @@ public class Weaver
     public static void main(String[] args)
             throws IOException
     {
-
         Detector detector = Detector.DEFAULT;
 
         String currentName = null;

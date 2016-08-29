@@ -3,7 +3,6 @@ package kilim.mirrors;
 public class ClassMirrorNotFoundException
         extends Exception
 {
-
     /**
      *
      */

@@ -17,7 +17,6 @@ import static kilim.Constants.D_BYTE;
 public class TestFlow
         extends Base
 {
-
     @Override
     protected void setUp()
             throws Exception

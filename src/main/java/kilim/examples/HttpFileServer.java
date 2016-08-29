@@ -3,8 +3,13 @@
  * You may distribute this software under the terms of the license 
  * specified in the file "License"
  */
-
 package kilim.examples;
+
+import kilim.Pausable;
+import kilim.http.HttpRequest;
+import kilim.http.HttpResponse;
+import kilim.http.HttpServer;
+import kilim.http.HttpSession;
 
 import java.io.EOFException;
 import java.io.File;
@@ -14,17 +19,11 @@ import java.io.PrintStream;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
 
-import kilim.Pausable;
-import kilim.http.HttpRequest;
-import kilim.http.HttpResponse;
-import kilim.http.HttpServer;
-import kilim.http.HttpSession;
-
 /**
  * A simple file server over http
- * 
+ * <p>
  * Usage: Run java kilim.examples.HttpFileServer [base directory name] From a browser, go to "http://localhost:7262".
- * 
+ * <p>
  * A HttpFileServer object is a SessionTask, and is thus a thin wrapper over the socket connection. Its execute() method
  * is called once on connection establishment. The HttpRequest and HttpResponse objects are wrappers over a bytebuffer,
  * and unrelated to the socket. The request object is "filled in" by HttpSession.readRequest() and the response object
@@ -32,11 +31,16 @@ import kilim.http.HttpSession;
  * Kilim and non-Kilim approaches alike. The objective of this example is merely to demonstrate Kilim API, not to have a
  * fully functioning file server.
  */
-public class HttpFileServer extends HttpSession {
-    public static File   baseDirectory;
+public class HttpFileServer
+        extends HttpSession
+{
+    public static File baseDirectory;
     public static String baseDirectoryName;
+    public static HashMap<String, String> mimeTypes = new HashMap<String, String>();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args)
+            throws IOException
+    {
         baseDirectoryName = ".";
         if (args.length > 0) {
             baseDirectoryName = args[0];
@@ -53,13 +57,29 @@ public class HttpFileServer extends HttpSession {
         System.out.println("HttpFileServer listening on http://localhost:7262");
     }
 
-    public static void usage() {
+    public static void usage()
+    {
         System.err.println("Usage: java kilim.examples.HttpFileServer [<baseDirectory>]");
         System.exit(1);
     }
 
+    public static String mimeType(File file)
+    {
+        String name = file.getName();
+        int dotpos = name.lastIndexOf('.');
+        if (dotpos == -1) {
+            return "text/plain";
+        }
+        else {
+            String mimeType = mimeTypes.get(name.substring(dotpos + 1).toLowerCase());
+            return (mimeType == null) ? "text/plain" : mimeType;
+        }
+    }
+
     @Override
-    public void execute() throws Pausable, Exception {
+    public void execute()
+            throws Pausable, Exception
+    {
         try {
             // We will reuse the req and resp objects
             HttpRequest req = new HttpRequest();
@@ -74,47 +94,58 @@ public class HttpFileServer extends HttpSession {
                     System.out.println("[" + this.id + "] Read: " + f.getPath());
                     if (check(resp, f)) {
                         boolean headOnly = req.method.equals("HEAD");
-                        if (f.isDirectory())
+                        if (f.isDirectory()) {
                             sendDirectory(resp, f, headOnly);
-                        else
+                        }
+                        else {
                             sendFile(resp, f, headOnly);
+                        }
                     }
-                } else {
+                }
+                else {
                     super.problem(resp, HttpResponse.ST_FORBIDDEN, "Only GET and HEAD accepted");
                 }
                 if (!req.keepAlive()) {
                     break;
                 }
             }
-        } catch (EOFException e) {
+        }
+        catch (EOFException e) {
             System.out.println("[" + this.id + "] Connection Terminated");
-        } catch (IOException ioe) {
+        }
+        catch (IOException ioe) {
             System.out.println("[" + this.id + "] IO Exception:" + ioe.getMessage());
         }
         super.close();
     }
 
-    private File urlToPath(HttpRequest req) {
+    private File urlToPath(HttpRequest req)
+    {
         return (req.uriPath == null) ? baseDirectory : new File(baseDirectory, req.uriPath);
     }
 
-    public boolean check(HttpResponse resp, File file) throws IOException, Pausable {
+    public boolean check(HttpResponse resp, File file)
+            throws IOException, Pausable
+    {
         byte[] status = HttpResponse.ST_OK;
         String msg = "";
-        
+
         if (!file.exists()) {
             status = HttpResponse.ST_NOT_FOUND;
             msg = "File Not Found: " + file.getName();
-        } else if (!file.canRead()) {
+        }
+        else if (!file.canRead()) {
             status = HttpResponse.ST_FORBIDDEN;
             msg = "Unable to read file " + file.getName();
-        } else {
+        }
+        else {
             try {
                 String path = file.getCanonicalPath();
                 if (!path.startsWith(baseDirectoryName)) {
                     throw new SecurityException();
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 status = HttpResponse.ST_FORBIDDEN;
                 msg = "Error retrieving " + file.getName() + ":<br>" + e.getMessage();
             }
@@ -122,19 +153,23 @@ public class HttpFileServer extends HttpSession {
         if (status != HttpResponse.ST_OK) {
             problem(file, resp, status, msg);
             return false;
-        } else {
+        }
+        else {
             return true;
         }
     }
 
-    public void sendFile(HttpResponse resp, File file, boolean headOnly) throws IOException, Pausable {
+    public void sendFile(HttpResponse resp, File file, boolean headOnly)
+            throws IOException, Pausable
+    {
         FileInputStream fis;
         FileChannel fc;
 
         try {
             fis = new FileInputStream(file);
             fc = fis.getChannel();
-        } catch (IOException ioe) {
+        }
+        catch (IOException ioe) {
             problem(file, resp, HttpResponse.ST_NOT_FOUND, "Send exception: " + ioe.getMessage());
             return;
         }
@@ -148,13 +183,16 @@ public class HttpFileServer extends HttpSession {
             super.sendResponse(resp);
             // Send the contents; this uses sendfile or equivalent underneath.
             endpoint.write(fc, 0, file.length());
-        } finally {
+        }
+        finally {
             fc.close();
             fis.close();
         }
     }
 
-    public void sendDirectory(HttpResponse resp, File file, boolean headOnly) throws Pausable, IOException {
+    public void sendDirectory(HttpResponse resp, File file, boolean headOnly)
+            throws Pausable, IOException
+    {
         PrintStream p = new PrintStream(resp.getOutputStream());
         String relDir = getRelPath(file);
         p.print("<html><head><title>Index of ");
@@ -166,7 +204,8 @@ public class HttpFileServer extends HttpSession {
         String names[] = file.list();
         if (names == null) {
             p.print("No files found");
-        } else {
+        }
+        else {
             for (int i = 0; i < names.length; i++) {
                 // <a href="webpath">name</a>
                 p.print("<a href=\"");
@@ -183,22 +222,24 @@ public class HttpFileServer extends HttpSession {
         super.sendResponse(resp);
     }
 
-    public void problem(File file, HttpResponse resp, byte[] statusCode, String msg) throws IOException, Pausable {
+    public void problem(File file, HttpResponse resp, byte[] statusCode, String msg)
+            throws IOException, Pausable
+    {
         System.out.println("[" + id + "]. Error retrieving " + file.getAbsolutePath() + "':\n   " + msg);
         super.problem(resp, statusCode, msg);
     }
 
-    private String getRelPath(File file) throws IOException {
+    private String getRelPath(File file)
+            throws IOException
+    {
         String path = file.getCanonicalPath();
         if (!path.startsWith(baseDirectoryName)) {
             throw new SecurityException();
         }
-        path =  path.substring(baseDirectoryName.length()); // include the "/"
+        path = path.substring(baseDirectoryName.length()); // include the "/"
         return (path.length() == 0) ? "." : path;
     }
 
-    public static HashMap<String, String> mimeTypes = new HashMap<String, String>();
-    
     static {
         mimeTypes.put("html", "text/html");
         mimeTypes.put("htm", "text/html");
@@ -284,16 +325,5 @@ public class HttpFileServer extends HttpSession {
         mimeTypes.put("wml", "text/vnd.wap.wml");
         mimeTypes.put("wmlc", "application/vnd.wap.wmlc");
         mimeTypes.put("wmls", "text/vnd.wap.wmlscript");
-    }
-
-    public static String mimeType(File file) {
-        String name = file.getName();
-        int dotpos = name.lastIndexOf('.');
-        if (dotpos == -1)
-            return "text/plain";
-        else {
-            String mimeType = mimeTypes.get(name.substring(dotpos + 1).toLowerCase());
-            return (mimeType == null) ? "text/plain" : mimeType;
-        }
     }
 }

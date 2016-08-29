@@ -20,7 +20,6 @@ import java.io.OutputStream;
 public class HttpSession
         extends SessionTask
 {
-
     static byte[] pre = "<html><body><p>".getBytes();
 
     // public static void dumpBuf(String msg, ByteBuffer buffer) {

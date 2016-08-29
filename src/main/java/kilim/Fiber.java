@@ -14,7 +14,6 @@ import java.lang.reflect.Field;
 
 public final class Fiber
 {
-
 //    public boolean debug = false;
     /*
      * Status indicators returned by down()

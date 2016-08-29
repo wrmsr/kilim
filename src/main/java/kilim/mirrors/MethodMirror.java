@@ -2,7 +2,6 @@ package kilim.mirrors;
 
 public interface MethodMirror
 {
-
     public abstract String getName();
 
     /**

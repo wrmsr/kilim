@@ -7,7 +7,6 @@ public class ExPausable
     void noop()
             throws Pausable
     {
-
     }
 
     void simple()

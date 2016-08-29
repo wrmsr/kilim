@@ -76,7 +76,6 @@ class CachedClassMirror
         extends ClassVisitor
         implements ClassMirror
 {
-
     String name;
     boolean isInterface;
     MethodMirror[] declaredMethods;
@@ -246,7 +245,6 @@ class CachedClassMirror
 class CachedMethodMirror
         implements MethodMirror
 {
-
     private String[] exceptions;
     private String desc;
     private String name;

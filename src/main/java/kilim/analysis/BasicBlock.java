@@ -264,7 +264,6 @@ import static org.objectweb.asm.Opcodes.T_SHORT;
 public class BasicBlock
         implements Comparable<BasicBlock>
 {
-
     /*
      * Used by the flow analysis algorithm to mark this BB as enqueued for
      * processing
@@ -382,7 +381,6 @@ public class BasicBlock
             HashMap<LabelNode, LabelNode> labelCopyMap)
             throws KilimException
     {
-
         ArrayList<BasicBlock> newBBs = new ArrayList<BasicBlock>(targetBB.getSubBlocks().size());
         for (BasicBlock orig : targetBB.getSubBlocks()) {
             BasicBlock dup = bbCopyMap.get(orig);
@@ -1505,7 +1503,6 @@ public class BasicBlock
             HashMap<LabelNode, LabelNode> labelCopyMap, BasicBlock returnToBB)
             throws KilimException
     {
-
         for (BasicBlock orig : getSubBlocks()) {
             BasicBlock dup = new BasicBlock(flow, orig.startLabel);
             bbCopyMap.put(orig, dup);

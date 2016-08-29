@@ -109,7 +109,6 @@ public class RuntimeClassMirrors
 class RuntimeMethodMirror
         implements MethodMirror
 {
-
     private final Method method;
 
     public RuntimeMethodMirror(Method method)
@@ -151,7 +150,6 @@ class RuntimeMethodMirror
 class RuntimeClassMirror
         implements ClassMirror
 {
-
     private final Class<?> clazz;
     private MethodMirror[] methods;
 
