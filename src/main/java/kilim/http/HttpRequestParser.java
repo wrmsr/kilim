@@ -4,7 +4,6 @@
  * You may distribute this software under the terms of the license
  * specified in the file "License"
  */
-
 package kilim.http;
 
 /**
